@@ -2,7 +2,7 @@
 
 - 이벤트나 데이터가 극단적으로 증가하여 대용량 데이터의 저장, 업데이트, 실시간 반영을 효율적으로 해결할 방법으로 주목되었다
 - 2013 년에 마이크로소프트에서 프로그래밍 모델을 비동기 및 이벤트 중심의 데이터 구조로 재정의한 Reactive Extensions 를 자바 진영으로 가져온것
-    - NetFlix가 공개한 라이브러리
+  - NetFlix가 공개한 라이브러리
 
 ### Reactive Streams 규칙
 
@@ -20,20 +20,20 @@
 
 #### Flowable - Subscriber
 - Reactive Streams 지원
-    - 기본적인 매커니즘이 Reactive Streams 와 같다
-    - Subscription 으로 **데이터 개수 요청**과 **구독 해지**
+  - 기본적인 매커니즘이 Reactive Streams 와 같다
+  - Subscription 으로 **데이터 개수 요청**과 **구독 해지**
 - Flowable
-    - Reactive Streams 의 생산자인 Publisher를 구현
+  - Reactive Streams 의 생산자인 Publisher를 구현
 - Subscriver
-    - Reactive Streams 의 클래스
+  - Reactive Streams 의 클래스
 
 #### Observable - Observer
 - RxJava 2.x 버전
 - Reactive Streams 미지원
-    - 기본적인 매커니즘은 Flowable - Subscriber 와 거의 같다
+  - 기본적인 매커니즘은 Flowable - Subscriber 와 거의 같다
 - 데이터 개수를 제어하는 **배압 기능이 없다**
-    - 데이터 개수를 요청하지 않음
-    - 구독 해지 메서드가 있는 인터페이스 **Disposable** 을 사용
+  - 데이터 개수를 요청하지 않음
+  - 구독 해지 메서드가 있는 인터페이스 **Disposable** 을 사용
 
 ### 연산자
 
@@ -41,13 +41,13 @@
 - 소비자가 사용하기 쉽게 데이터를 변환한다
 - 연산자가 설정된 시점이 아닌 **데이터가 통지 받는 시점**에 처리가 실행된다
 - 함수형 프로그래밍의 영향을 받아 **Side Effect** 를 피하는게 좋다
-    - 체인 도중이 아닌 소비자 측에서 하는게 좋다
-    - 여러 스레드에서 공유하는 객체가 없어져 쓰레드 안전을 보장할 수 있다
+  - 체인 도중이 아닌 소비자 측에서 하는게 좋다
+  - 여러 스레드에서 공유하는 객체가 없어져 쓰레드 안전을 보장할 수 있다
 
 ### 비동기 처리
 
 - 개발자가 직접 스레드를 관리할 필요 없이 처리 목적에 맞춰 **스케줄러**를 설정
-    - 데이터를 통지하는 부분과 처리하는 부분에 지정할 수 있다
+  - 데이터를 통지하는 부분과 처리하는 부분에 지정할 수 있다
 
 ### Cold 생산자와 Hot 생산자
 
@@ -66,3 +66,41 @@
 
 - Cold 에서 Hot 으로 변환하는 메서드를 호출
 - Processor 와 Subject 를 생성
+
+### ConnectableFlowable/ ConnectableObservable
+- **Hot 생산자**
+- Cold 를 Hot으로 변환하는 연산자로 생성할 수 있다
+- subscribe 를 호출해도 처리를 시작하지 않고 **connect 를 호출해야 처리 시작**
+- 처음 부터 여러 구독자에게 데이터를 통지할 수 있음
+- refCount 를 이용해서 일반 Flowable/Observable 을 반환 할 수 있음
+  - 같은 timeline 에서 생성되는 데이터 통지
+  - Connectable 이 아니기 때문에 connect 가 아닌 subscribe 로 데이터 처리 시작
+
+### Flowable/Observable 을 Cold 에서 Hot 으로 변환
+
+- publish()
+- replay() / replay(int buffsize) / replay(long time, TimeUnit unit)
+- share()
+
+#### publish
+
+- Cold 생산자에서 Connectable 을 생성하는 연산자
+- 처리를 시작한 뒤에 구독하면 **구독한 이후에 생성된 데이터 부터 통지**
+
+#### replay
+
+- Cold 생산자에서 Connectable 을 생성하는 연산자
+- 통지한 데이터를 캐시하여 처리를 시작한 뒤에 구독하면 캐시된 데이터를 먼저 통지
+- 인자가 없으면 **모든 데이터를 캐시**
+
+#### share
+
+- 여러 소비자가 구독할 수 있는 Flowable/Observable(Hot) 을 생성
+- **Connectable 을 생성하지 않는다**
+- 실질적으로는 flowable.publish().refCount() 와 같다
+
+>[!note] 소비자의 처리 속도가 느린 경우
+>- 소비자들이 같은 데이터를 같은 시점에 받지 않을 수 있습니다.
+>- 이미 구독하고 있던 소비자는 버퍼에 있는데이터를 통지 받음
+>- 새로 구독한 소비자는 최신 데이터를 통지 받음
+
