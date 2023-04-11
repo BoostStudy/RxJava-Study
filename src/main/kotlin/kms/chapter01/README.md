@@ -104,3 +104,31 @@
 >- 이미 구독하고 있던 소비자는 버퍼에 있는데이터를 통지 받음
 >- 새로 구독한 소비자는 최신 데이터를 통지 받음
 
+### Flowable 시퀀스
+
+1. Subscriber 가 Flowable을 구독한다(**Subscribe**)
+2. Flowable이 **Subscription**을 생성한다
+3. Flowable이 Subscriber에 구독 시작(**onSubscribe**)을 통지하여 Subscription을 전달
+4. Subscriber는 Subscription에 데이터를 통지하게 요청
+5. Flowable은 데이터를 Subscriber에게 통지
+6. Subscriber는 받은 데이터를 처리한다
+7. 처리한 후 Subscriber는 Subscription에게 데이터 통지를 요청
+8. Flowable은 데이터가 있다면 그 데이터를 Subscriber에게 통지
+9. Subscriber는 받은 데이터를 처리한다
+10. 처리한 후 Subscriber는 Subscription에게 데이터 통지를 요청
+11. Flowable 은 데이터가 없다면 완료(onComplete)를 통지
+12. Subscriber는 완료를 처리한다
+
+### BackpressureStrategy 종류
+
+- **BUFFER**
+  - 통지할 수 있을 때까지 모든 데이터를 버퍼링 한다
+- **DROP**
+  - 통지할 수 있을 때까지 새로 생성한 데이터를 삭제한다
+- **LATEST**
+  - 생성한 최신 데이터만 버퍼링하고 생성할 때마다 버퍼링하는 데이터를 교환한다
+- **ERROR**
+  - 버퍼 크기를 초과하면 MissingBackPressureException 에러를 통지
+- **NONE**
+  - 특정 처리를 수행하지 않는다.
+  - onBackPressure로 시작하는 메서드로 배압 모드를 설정할 때 사용
