@@ -132,3 +132,34 @@
 - **NONE**
   - 특정 처리를 수행하지 않는다.
   - onBackPressure로 시작하는 메서드로 배압 모드를 설정할 때 사용
+
+### Observable
+
+- Observable 과 Observer 의 관계와 Flowable 과 Subscriber 의 관계의 차이점
+  - Reactive Streams 사양을 구현하지 않았다
+  - 배압 기능이 없다
+    - 배압이 없기 때문에 오버헤드가 적다
+    - 성능이 중요한 경우 사용
+
+### Flowable vs Observable
+
+- **Flowable 사용**
+  - 대량 데이터(10,000건)를 처리할 때
+  - 네트워크 통신이나 데이터베이스 등의  I/O 처리를 할 때
+- **Observable 사용**
+  - GUI 이벤트
+  - 소량 데이터(1,000건)를 처리할 때
+  - 데이터 처리가 기본으로 동기 방식이며, 자바 표준의 Stream 대신 사용할 때
+
+#### 사용위치
+
+- **서버**
+  - 메모리가 부족하거나 처리 대기 중인 데이터가 쌓이게 되면 서버 전체에 영향
+    - 버퍼링의 상한을 정해 **MissingBackpressureException** 을 발생 시킴
+- **클라이언트**
+  - **MissingBackpressureException** 이 발생하지 않는게 좋음
+
+#### 데이터의 일부만 사용하는 경우
+
+- BackpressureStrategy.DROP 을 설정하면 처리할 수 없는 데이터를 삭제 가능
+- Observable 의 throttle 계열의 메서드로 특정 시점의 데이터만을 사용
