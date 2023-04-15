@@ -161,4 +161,14 @@ publish는 그냥 Hot으로 변환해주는 것 -> stateIn, sharedIn 느낌
 replay sharedIn으로 하고 replay값 넣어주는 느낌
 share는 sharedIn 느낌
 
+## Flowable vs Observable
+
+### Flowable
+- 대량 데이터를 처리할 때
+- 네트워크 통신이나 데이터베이스 등의 I/O 처리를 할 때
+
+### Observable
+- GUI 이벤트
+- 소량 데이터를 처리할 때
+- 데이터 처리가 기본적으로 동기 방식이며, 자바 표준의 Stream 대신 사용할 때
 
