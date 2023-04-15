@@ -163,3 +163,59 @@
 
 - BackpressureStrategy.DROP 을 설정하면 처리할 수 없는 데이터를 삭제 가능
 - Observable 의 throttle 계열의 메서드로 특정 시점의 데이터만을 사용
+
+### RxJava 기본 구성
+
+- **소비자**(Subscriber/Observer)가 **생산자**(Flowable/Observable)를 구독하는 형태
+  - Flowable/Subscriber/Subscription
+    - Reactive Stream 사양 지원
+  - Observable/Observer/Disposable
+
+>[!note] Reactive Stream 사양
+>BackPressure 을 이용하여 비동기 요소들 사이의 상호작용을 정의하는 작은 스펙
+
+- FlowableProcessor 는 Processor 를 구현하고 Flowable 과 Subscriber 가 될 수 있는 추상 클래스
+- Subject 는 BackPressure 가 없는 FlowableProcessor 로 볼 수 있다
+  - Observable 이나 Observer 가 될 수 있는 추상 클래스
+- Subscriber 를 구현한 DisposableSubscriber 와 ResourceSubscriber 를 제공
+- Observer 를 구현한 DisposableObserver와 ResourceObserver도 제공
+
+### 데이터 통지시 규칙
+
+- **null** 을 통지하면 안 된다
+- 데이터 통지는 **해도 되고 안 해도 된다**
+- Flowable/ Observable 의 처리를 끝낼 때는 **완료**나 **에러** 통지를 해야 하며, 둘 다 통지하지는 않는다
+- 완료나 에러 통지를 **한 뒤에는 다른 통지를 하면 안된다**
+- 통지할 때는 **1건씩 순차적**으로 통지하며, 동시에 통지하면 안 된다
+
+### Processor / Subject 종류
+
+- **Publish**
+  - 데이터를 받은 시점에만 소비자에 데이터를 통지
+  - SharedFlow 처럼 동작
+- **Behavior**
+  - 소비자가 구독하기 직전 데이터를 버퍼링해 해당 데이터 부터 통지
+  - StateFlow 처럼 동작
+- **Replay**
+  - 처리하는 도중 구동한 소비자에게도 받은 모든 데이터를 통지
+- **Async**
+  - 데이터 생성을 완료했을 때 마지막으로 받은 데이터만 소비자에게 통지
+- **Unicast**
+  - 1개의 소비자만 구독할 수 있다
+
+### CompositeDisposable
+
+- 여러 Disposable 을 모아 한번에 구동 해지하는 클래스
+
+### Single / Maybe / Completable
+
+- **Single**
+  - 1건만 통지하거나 에러를 통지하는 클래스
+  - 통지 자체가 완료를 의미
+  - SingleObserver
+- **Maybe**
+  - 0 or 1건만 통지하고 완료 or 에러를 통지하는 클래스
+  - MaybeObserver
+- **Completable**
+  - 데이터를 통지하지 않고 완료 or 에러를 통지하는 클래스
+  - CompletableObserver
