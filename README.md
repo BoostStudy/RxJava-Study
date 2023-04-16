@@ -26,7 +26,7 @@
 
 | 장  | 제목                            | 날짜 | 링크 |
 | -- | -------------------------------| --- | --- |
-| 1장 | RxJava의 기본                   |     |     |
+| 1장 | RxJava의 기본                   | 4/16 | [Issues #1](https://github.com/BoostStudy/RxJava-Study/issues/1)  |
 | 2장 | RxJava를 사용하는 데 필요한 배경 지식 |    |     |
 | 3장 | RxJava의 메커니즘                |     |     |
 | 4장 | Flowable과 Observable의 연산자   |     |     |
