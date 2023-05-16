@@ -1,6 +1,8 @@
 # RxJava-Study
 [RxJava 리액티브 프로그래밍 책](http://www.yes24.com/Product/Goods/71768642) 스터디 공간입니다.
 
+> 현재 스터디 인원 모두가 rx보다 flutter, compose가 더 급해져서 스터디 잠정 중단
+
 ## 공부 방법
 
 - 가능한 모든 코드를 직접 입력한다.
